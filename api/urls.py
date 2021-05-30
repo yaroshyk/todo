@@ -1,6 +1,6 @@
-from django.urls import path
-from . import views
+#from django.urls import path
+#from . import views
 
-urlpatterns= [
-    path('add', views.add, name="todo-add")
-]
+#urlpatterns= [
+#   path('add', views.add, name="todo-add")
+#]

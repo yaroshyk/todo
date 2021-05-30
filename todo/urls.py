@@ -1,10 +1,11 @@
 from django.contrib import admin
-from django.urls import path, include
 
-from django.contrib import admin
 from django.urls import path
 
+from api import views
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('task/', include('api.urls'))
+    path('', views.index, name="todo"),
+    path('del', views.remove, name="del"),
+    path('admin', admin.site.urls)
 ]

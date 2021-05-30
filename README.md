@@ -1,2 +1,2 @@
 # todo
-Toodo pet project
+Todo pet project

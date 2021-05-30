@@ -38,7 +38,24 @@
                 0 6px 20px 0 rgba(0,0,0,0.36);
   }
   </style>
+  <script>
+    $(function() {
+      $('#addForm').on('submit', function(event) {
+        event.preventDefault();
 
+        $.ajax({
+          'url': 'add',
+          'data': $('#addForm').serialize(),
+          'method': 'POST'
+        })
+           .done(function(data) {
+              $('#tasks').html(data);
+           });
+
+        return false;
+    });
+    });
+  </script>
 </head>
 
 <body  class="container-fluid">
@@ -58,28 +75,14 @@
 
   <div class="row">
 
-    <div class="col-md-8">
+    <div class="col-md-8" id="tasks">
 
-      {% for i in list %}
-      <div class="card">
-        <center><b>{{i.title}}</b></center>
-        <hr/>
-        {{i.date}}
-        <hr/>
-        {{i.details}}
-        <br />
-        <br />
-        <form action="/del/{{i.id}}" method="POST" style=" padding-right: 4%; padding-bottom: 3%;">
-          {% csrf_token %}
-          <button value="remove" type="submit"  class="btn btn-primary" style="float: right;"><span class="glyphicon glyphicon-trash"></span> &nbsp; remove</button>
-        </form>
-      </div>
-      {% endfor%}
+        {% include "api/tasks.html" %}
     </div>
     <div class="col-md-1"> </div>
     <div class="col-md-3" >
       <div  class="submit_form">
-      <form  method="POST">
+      <form  method="POST" id="addForm">
         {% csrf_token %}
         {{forms|crispy}}
         <center>

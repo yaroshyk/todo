@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 
 from django.utils import timezone
@@ -8,7 +10,9 @@ class Todo(models.Model):
 
     details = models.TextField()
 
-    date = models.DateTimeField(default=timezone.now)
+    date = models.DateTimeField(default=datetime.datetime.now())
+
+    group = models.TextField(default='home')
 
     def __str__(self):
         return self.title

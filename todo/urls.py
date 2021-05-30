@@ -6,6 +6,7 @@ from api import views
 
 urlpatterns = [
     path('', views.index, name="todo"),
-    path('del', views.remove, name="del"),
-    path('admin', admin.site.urls)
+    path('del/<int:item_id>', views.remove, name="del"),
+    path('admin', admin.site.urls),
+    path('add', views.add, name="add")
 ]

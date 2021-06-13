@@ -8,5 +8,6 @@ urlpatterns = [
     path('', views.index, name="todo"),
     path('del/<int:item_id>', views.remove, name="del"),
     path('admin', admin.site.urls),
-    path('add', views.add, name="add")
+    path('add', views.add, name="add"),
+    path('edit/<int:item_id>', views.edit, name="edit")
 ]

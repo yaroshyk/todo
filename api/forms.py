@@ -16,6 +16,6 @@ class TodoForm(forms.ModelForm):
     group = forms.ChoiceField(choices=(
         ('', 'Choose...'),
         ('0', 'Home'),
-        ('1', 'Work'),
+        ('1', 'Work')
     ))
 

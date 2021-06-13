@@ -1,0 +1,9 @@
+{% load crispy_forms_tags %}
+
+<form method="POST" action="{% if item is not defined %}/edit/{{ item.id }}{% else %}/add{% endif %}" class="addForm">
+    {% csrf_token %}
+    {{forms|crispy}}
+    <center>
+        <input type="submit" class="btn btn-default" value="submit"/>
+    </center>
+</form>

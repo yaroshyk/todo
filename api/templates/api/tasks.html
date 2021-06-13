@@ -1,15 +1,23 @@
 {% for i in list %}
-      <div class="card">
-        <center><b>{{i.title}}</b></center>
-        <hr/>
-        {{i.date}}
-        <hr/>
-        {{i.details}}
-        <br />
-        <br />
-        <form action="/del/{{i.id}}" method="POST" style=" padding-right: 4%; padding-bottom: 3%;">
-          {% csrf_token %}
-          <button value="remove" type="submit"  class="btn btn-primary" style="float: right;"><span class="glyphicon glyphicon-trash"></span> &nbsp; remove</button>
-        </form>
-      </div>
-      {% endfor%}
+<div class="card">
+    <center><b>{{i.title}}</b></center>
+    <hr/>
+    {{i.details}}
+    <hr/>
+    <br>
+    {{ i.date }}
+    <hr>
+    <form action="/del/{{i.id}}" method="POST" style="position: absolute; padding-right: 4%; padding-bottom: 3%;">
+        {% csrf_token %}
+        <button value="remove" type="button" class="remove-btn btn btn-primary" style="float: right;"><span
+                class="glyphicon glyphicon-trash"></span> &nbsp; remove
+        </button>
+    </form>
+    <form action="/edit/{{i.id}}" method="POST" style=" padding-right: 4%; padding-bottom: 3%;">
+        {% csrf_token %}
+        <button value="remove" type="button" class="edit-btn btn" style="float: right;"><span
+                class="glyphicon glyphicon-pencil"></span> &nbsp; edit
+        </button>
+    </form>
+</div>
+{% endfor%}

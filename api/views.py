@@ -61,7 +61,7 @@ def remove(request, item_id):
 
     item.delete()
 
-    messages.info(request, "item removed !!!")
+    messages.info(request, "Item removed!!!")
 
     return HttpResponse("", "text/plain", 201)
 

@@ -1,92 +1,88 @@
-from django.contrib import messages
+from http import HTTPStatus
+
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render
+from django.views.decorators.http import require_http_methods
 
-from .forms import TodoForm
-from .models import Todo
+from api.forms import TodoForm
+from api.models import Todo
+
+PAGE_SIZE = 10
 
 
+@login_required
+@require_http_methods(["GET", "POST"])
 def index(request):
-    item_list = Todo.objects.order_by("-date")
-
-    if request.method == "POST":
-
-        form = TodoForm(request.POST)
-
-        if form.is_valid():
-            form.save()
-
-            return redirect('todo')
-
     form = TodoForm()
+    form.instance.user_id = request.user.id
 
-    page = {
-
-        "forms": form,
-
-        "list": item_list,
-
-        "title": "TODO LIST",
-
-    }
-
-    return render(request, 'api/index.html', page)
+    return render(request,
+                  'api/index.html',
+                  {
+                      "forms": form,
+                      "list": Todo.objects.filter(user_id=request.user.id).order_by("-date")[0:PAGE_SIZE],
+                      "title": "TODO LIST"
+                  })
 
 
+@login_required
+@require_http_methods(["POST"])
 def add(request):
-    item_list = Todo.objects.order_by("-date")
+    form = TodoForm(request.POST)
+    valid = form.is_valid()
 
-    if request.method == "POST":
+    if valid:
+        todo: Todo = form.save(commit=False)
+        todo.user_id = request.user.id
+        todo.save()
 
-        form = TodoForm(request.POST)
-
-        if form.is_valid():
-            form.save()
-
-    #            return redirect('todo')
-
-    form = TodoForm()
-
-    page = {
-        "forms": form,
-        "list": item_list,
-        "title": "TODO LIST",
-    }
-
-    return render(request, 'api/tasks.html', page)
+    return render(
+        request=request,
+        template_name='api/tasks.html',
+        context={
+            "forms": form,
+            "list": Todo.objects
+                        .filter(user_id=request.user.id)
+                        .order_by("-date")[0:PAGE_SIZE],
+            "title": "TODO LIST"
+        },
+        status=(HTTPStatus.CREATED if valid else HTTPStatus.BAD_REQUEST)
+    )
 
 
+# noinspection PyUnusedLocal
+@login_required
+@require_http_methods(["POST", "DELETE"])
 def remove(request, item_id):
-    item = Todo.objects.get(id=item_id)
-
+    item: Todo = Todo.objects.get(id=item_id)
     item.delete()
 
-    messages.info(request, "Item removed!!!")
-
-    return HttpResponse("", "text/plain", 201)
+    return HttpResponse("", "text/plain", HTTPStatus.OK)
 
 
+@login_required
+@require_http_methods(["POST"])
 def edit(request, item_id):
-    item = Todo.objects.get(id=item_id)
+    todo: Todo = Todo.objects.get(id=item_id)
 
-    item_list = Todo.objects.order_by("-date")
+    form = TodoForm(request.POST, instance=todo)
+    if form.is_valid():
+        todo: Todo = form.save(commit=False)
+        todo.user_id = request.user.id
+        todo.save()
+        return render(request=request,
+                      template_name='api/tasks.html',
+                      context={
+                          "forms": form,
+                          "list": Todo.objects.order_by("-date")[0:PAGE_SIZE],
+                      },
+                      status=HTTPStatus.OK)
 
-    if request.method == "POST":
-
-        form = TodoForm(request.POST, instance=item)
-
-        if form.is_valid():
-            item.save()
-            return render(request, 'api/tasks.html', {
-                "forms": form,
-                "list": item_list,
-            })
-
-    form = TodoForm(instance=item)
-
-    page = {
-        "forms": form,
-        "item": item
-    }
-
-    return render(request, 'api/form.html', page)
+    return render(request=request,
+                  template_name='api/form.html',
+                  context={
+                      "forms": form,
+                      "item": todo
+                  },
+                  status=HTTPStatus.BAD_REQUEST)

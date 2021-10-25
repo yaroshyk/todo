@@ -1,0 +1,14 @@
+
+.text-styles {
+    text-decoration: underline;
+    font-style: italic;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.table-styles {
+    border: 1px dotted #f00;
+    padding: 10px;
+    background-color: #333;
+    box-shadow: 5px 2px 2px #dfd;
+}
